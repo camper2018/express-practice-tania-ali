@@ -1,0 +1,43 @@
+https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Introduction#introducing_node
+
+Node is a single-threaded event-driven execution environment. 
+"Single threaded" means that all requests to the server are run on the same thread (rather than being spawned off into separate processes). 
+This model is extremely efficient in terms of speed and server resources, but it does mean that if any of your functions call synchronous methods that take a long time to complete, they will block not just the current request, but every other request being handled by your web application.
+
+There are a number of ways for an asynchronous API to notify your application that it has completed. 
+The most common way is to register a callback function when you invoke the asynchronous API, that will be called back when the operation completes.
+
+Note: You can use any argument names you like in the callback functions; when the callback is invoked the first argument will always be the request and the second will always be the response. 
+It makes sense to name them such that you can identify the object you're working with in the body of the callback.
+
+Using middleware
+Middleware is used extensively in Express apps, for tasks from serving static files to error handling, to compressing HTTP responses. 
+Whereas route functions end the HTTP request-response cycle by returning some response to the HTTP client, middleware functions typically perform some operation on the request or response and then call the next function in the "stack", which might be more middleware or a route handler. 
+The order in which middleware is called is up to the app developer.
+
+Note: The middleware can perform any operation, execute any code, make changes to the request and response object, and it can also end the request-response cycle. If it does not end the cycle then it must call next() to pass control to the next middleware function (or the request will be left hanging).
+Middleware and routing functions are called in the order that they are declared. 
+For some middleware the order is important (for example if session middleware depends on cookie middleware, then the cookie handler must be added first). 
+It is almost always the case that middleware is called before setting routes, or your route handlers will not have access to functionality added by your middleware.
+You can write your own middleware functions, and you are likely to have to do so (if only to create error handling code). 
+The only difference between a middleware function and a route handler callback is that middleware functions have a third argument next, which middleware functions are expected to call if they are not that which completes the request cycle (when the middleware function is called, this contains the next function that must be called).
+
+Error Handling:
+Express comes with a built-in error handler, which takes care of any remaining errors that might be encountered in the app. 
+This default error-handling middleware function is added at the end of the middleware function stack. 
+If you pass an error to next() and you do not handle it in an error handler, it will be handled by the built-in error handler; the error will be written to the client with the stack trace.
+
+Note: The stack trace is not included in the production environment. 
+To run it in production mode you need to set the environment variable NODE_ENV to 'production'.
+
+Note: HTTP404 and other "error" status codes are not treated as errors. 
+If you want to handle these, you can add a middleware function to do so. 
+For more information see the FAQ: 
+https://expressjs.com/en/starter/faq.html#how-do-i-handle-404-responses
+
+For more information see Error handling (Express docs):
+https://expressjs.com/en/guide/error-handling.html
+
+
+
+
